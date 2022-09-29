@@ -33,6 +33,16 @@ void App_CombinedSteering::Start()
 	m_pDrunkAgent->SetAutoOrient(true);
 	m_pDrunkAgent->SetBodyColor({1, 0, 0});
 
+	m_pFlee = new Flee();
+	m_pSoberWander = new Wander();
+	m_pPrioritySteering = new PrioritySteering({ m_pFlee, m_pSoberWander });
+
+	m_pEvadingAgent = new SteeringAgent();
+	m_pEvadingAgent->SetSteeringBehavior(m_pPrioritySteering);
+	m_pEvadingAgent->SetMaxLinearSpeed(15.f);
+	m_pEvadingAgent->SetMass(0.f);
+	m_pEvadingAgent->SetAutoOrient(true);
+
 }
 
 void App_CombinedSteering::Update(float deltaTime)
@@ -113,15 +123,25 @@ void App_CombinedSteering::Update(float deltaTime)
 	m_pDrunkAgent->Update(deltaTime);
 	m_pDrunkAgent->SetRenderBehavior(m_CanDebugRender);
 
+	TargetData evadeTarget;
+	evadeTarget.LinearVelocity = m_pDrunkAgent->GetLinearVelocity();
+	evadeTarget.Position = m_pDrunkAgent->GetPosition();
+
+	m_pFlee->SetTarget(evadeTarget);
+	m_pEvadingAgent->Update(deltaTime);
+	m_pEvadingAgent->SetRenderBehavior(m_CanDebugRender);
+
 	if(m_TrimWorld)
 	{
 		m_pDrunkAgent->TrimToWorld(m_TrimWorldSize);
+		m_pEvadingAgent->TrimToWorld(m_TrimWorldSize);
 	}
 }
 
 void App_CombinedSteering::Render(float deltaTime) const
 {
 	m_pDrunkAgent->Render(deltaTime);
+	m_pEvadingAgent->Render(deltaTime);
 
 	if (m_TrimWorld)
 	{

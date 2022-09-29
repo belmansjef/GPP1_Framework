@@ -36,10 +36,16 @@ private:
 	float m_TrimWorldSize = 25.f;
 
 	SteeringAgent* m_pDrunkAgent = nullptr;
+	SteeringAgent* m_pEvadingAgent = nullptr;
 
 	// Blended steering
 	BlendedSteering* m_pBlendedSteering = nullptr;
 	Seek* m_pSeek = nullptr;
 	Wander* m_pDrunkWander = nullptr;
+
+	// Priorty steering
+	PrioritySteering* m_pPrioritySteering = nullptr;
+	Flee* m_pFlee = nullptr;
+	Wander* m_pSoberWander = nullptr;
 };
 #endif

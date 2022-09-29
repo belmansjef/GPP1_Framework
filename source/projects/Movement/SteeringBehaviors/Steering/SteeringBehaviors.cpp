@@ -29,6 +29,14 @@ SteeringOutput Flee::CalculateSteering(float deltaT, SteeringAgent* pAgent)
 {
 	SteeringOutput steering = {};
 
+	const Elite::Vector2 fromTarget = pAgent->GetPosition() - m_Target.Position;
+	const float distanceFromTarget = fromTarget.Magnitude();
+	if(distanceFromTarget > m_FleeRadius)
+	{
+		steering.IsValid = false;
+		return steering;
+	}
+
 	steering.LinearVelocity = pAgent->GetPosition() - m_Target.Position;
 	steering.LinearVelocity.Normalize();
 	steering.LinearVelocity *= pAgent->GetMaxLinearSpeed();
