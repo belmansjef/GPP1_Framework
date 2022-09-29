@@ -30,16 +30,20 @@ public:
 	Elite::Vector2 GetAverageNeighborVelocity() const;
 
 	void SetTarget_Seek(TargetData target);
-	void SetWorldTrimSize(float size) { m_WorldSize = size; }
-
+	void SetWorldTrimSize(float size) { m_TrimWorldSize = size; }
+	
+	bool m_TrimWorld = false;
+	float m_TrimWorldSize = 0.f;
+	
 private:
 	//Datamembers
+	TargetData m_MouseTarget = {};
+	bool m_UseMouseTarget = false;
+	bool m_VisualizeMouseTarget = true;
+
 	int m_FlockSize = 0;
 	std::vector<SteeringAgent*> m_Agents;
 	std::vector<SteeringAgent*> m_Neighbors;
-
-	bool m_TrimWorld = false;
-	float m_WorldSize = 0.f;
 
 	float m_NeighborhoodRadius = 10.f;
 	int m_NrOfNeighbors = 0;
@@ -60,7 +64,6 @@ private:
 
 	float* GetWeight(ISteeringBehavior* pBehaviour);
 
-private:
 	Flock(const Flock& other);
 	Flock& operator=(const Flock& other);
 };

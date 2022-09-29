@@ -35,13 +35,15 @@ void App_Flocking::Update(float deltaTime)
 
 	m_pFlock->UpdateAndRenderUI();
 	m_pFlock->Update(deltaTime);
+
 	if (m_UseMouseTarget)
 		m_pFlock->SetTarget_Seek(m_MouseTarget);
 }
 
 void App_Flocking::Render(float deltaTime) const
 {
-	RenderWorldBounds(m_TrimWorldSize);
+	if(m_pFlock->m_TrimWorld)
+		RenderWorldBounds(m_pFlock->m_TrimWorldSize);
 
 	m_pFlock->Render(deltaTime);
 
