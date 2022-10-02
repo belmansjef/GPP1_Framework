@@ -9,8 +9,14 @@
 //COHESION (FLOCKING)
 SteeringOutput Cohesion::CalculateSteering(float deltaT, SteeringAgent* pAgent)
 {
-	m_Target.Position = m_pFlock->GetAverageNeighborPos();
-	return SteeringOutput();
+	SteeringOutput steering{};
+	const Elite::Vector2 desiredPos{m_pFlock->GetAverageNeighborPos()};
+	const Elite::Vector2 desiredVel{ desiredPos - pAgent->GetPosition() };
+
+	steering.LinearVelocity = desiredVel.GetNormalized() * pAgent->GetMaxLinearSpeed();
+
+	// m_Target.Position = m_pFlock->GetAverageNeighborPos();
+	return steering;
 }
 
 //*********************
@@ -20,19 +26,22 @@ SteeringOutput Separation::CalculateSteering(float deltaT, SteeringAgent* pAgent
 	if (m_pFlock->GetNrOfNeighbors() == 0) return SteeringOutput();
 
 	SteeringOutput steering{};
-	Elite::Vector2 pushForce{};
+	Elite::Vector2 totalForce{};
 	const std::vector<SteeringAgent*> neighbors{ m_pFlock->GetNeighbors() };
 	const int nrOfNeighbors{ m_pFlock->GetNrOfNeighbors() };
 
 	for (int i {0}; i < nrOfNeighbors; ++i)
 	{
-		pushForce += neighbors[i]->GetPosition() - pAgent->GetPosition();
+		Elite::Vector2 pushForce = neighbors[i]->GetPosition() - pAgent->GetPosition();
+		pushForce /= m_pFlock->GetNeighborhoodRadius();
+		totalForce += pushForce;
 	}
 
-	pushForce /= nrOfNeighbors;
-	pushForce *= -1.f;
-
-	steering.LinearVelocity = pushForce;
+	// Average and reverse
+	totalForce /= static_cast<float>(nrOfNeighbors);
+	totalForce *= -1.f;
+	totalForce = totalForce.GetNormalized() * pAgent->GetMaxLinearSpeed();
+	steering.LinearVelocity = totalForce;
 
 	return steering;
 }
@@ -43,6 +52,6 @@ SteeringOutput VelocityMatch::CalculateSteering(float deltaT, SteeringAgent* pAg
 {
 	SteeringOutput steering{};
 
-	steering.LinearVelocity = m_pFlock->GetAverageNeighborVelocity() * pAgent->GetMaxLinearSpeed();
+	steering.LinearVelocity = m_pFlock->GetAverageNeighborVel() * pAgent->GetMaxLinearSpeed();
 	return steering;
 }

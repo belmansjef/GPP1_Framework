@@ -27,7 +27,8 @@ public:
 	const std::vector<SteeringAgent*>& GetNeighbors() const { return m_Neighbors; }
 
 	Elite::Vector2 GetAverageNeighborPos() const;
-	Elite::Vector2 GetAverageNeighborVelocity() const;
+	Elite::Vector2 GetAverageNeighborVel() const;
+	float GetNeighborhoodRadius() { return m_NeighborhoodRadius; }
 
 	void SetTarget_Seek(TargetData target);
 	void SetWorldTrimSize(float size) { m_TrimWorldSize = size; }
@@ -37,15 +38,12 @@ public:
 	
 private:
 	//Datamembers
-	TargetData m_MouseTarget = {};
-	bool m_UseMouseTarget = false;
-	bool m_VisualizeMouseTarget = true;
-
 	int m_FlockSize = 0;
 	std::vector<SteeringAgent*> m_Agents;
 	std::vector<SteeringAgent*> m_Neighbors;
 
-	float m_NeighborhoodRadius = 10.f;
+	bool m_CanDebugRender = false;
+	float m_NeighborhoodRadius = 5.f;
 	int m_NrOfNeighbors = 0;
 
 	SteeringAgent* m_pAgentToEvade = nullptr;

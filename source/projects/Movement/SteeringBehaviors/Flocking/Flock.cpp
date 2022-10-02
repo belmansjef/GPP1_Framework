@@ -32,8 +32,8 @@ Flock::Flock(
 	m_pFleeBehavior = new Flee();
 
 	m_pBlendedSteering = new BlendedSteering({
-		{m_pCohesionBehavior, 0.5f},
-		{m_pSeparationBehavior, 0.5f},
+		{m_pCohesionBehavior, 0.35f},
+		{m_pSeparationBehavior, 0.65f},
 		{m_pVelMatchBehavior, 0.5f},
 		{m_pSeekBehavior, 0.5f},
 		{m_pWanderBehavior, 0.5f}
@@ -45,15 +45,15 @@ Flock::Flock(
 	{
 		m_Agents[i] = new SteeringAgent();
 		m_Agents[i]->SetSteeringBehavior(m_pPrioritySteering);
-		m_Agents[i]->SetMaxLinearSpeed(20.f);
+		m_Agents[i]->SetMaxLinearSpeed(25.f);
 		m_Agents[i]->SetMass(0.f);
 		m_Agents[i]->SetAutoOrient(true);
-		m_Agents[i]->SetBodyColor({ 0, 1, 1 });
+		m_Agents[i]->SetBodyColor({ 1, 1, 0 });
 	}
 
 	m_pAgentToEvade = new SteeringAgent();
 	m_pAgentToEvade->SetSteeringBehavior(m_pWanderBehavior);
-	m_pAgentToEvade->SetMaxLinearSpeed(15.f);
+	m_pAgentToEvade->SetMaxLinearSpeed(10.f);
 	m_pAgentToEvade->SetMass(0.f);
 	m_pAgentToEvade->SetAutoOrient(true);
 	m_pAgentToEvade->SetBodyColor({ 1, 0, 0 });
@@ -62,7 +62,7 @@ Flock::Flock(
 Flock::~Flock()
 {
 	SAFE_DELETE(m_pBlendedSteering);
-	SAFE_DELETE(m_pPrioritySteering);
+	SAFE_DELETE(m_pPrioritySteering); // TODO: Does this delete all child behaviors?
 	SAFE_DELETE(m_pAgentToEvade);
 
 	for(auto pAgent: m_Agents)
@@ -108,8 +108,41 @@ void Flock::Render(float deltaT)
 	for (const auto pAgent : m_Agents)
 	{
 		pAgent->Render(deltaT);
+		pAgent->SetBodyColor({ 1,1,0 });
 	}
 	m_pAgentToEvade->Render(deltaT);
+
+	if (m_CanDebugRender)
+	{
+		const float rayLength{ 5.f };
+		SteeringAgent* agentToDebug{m_Agents[0]};
+		RegisterNeighbors(agentToDebug);
+
+		const Vector2 dirToAvgNeighborPos{ GetAverageNeighborPos() - agentToDebug->GetPosition() };
+		const Vector2 avgNeighborVel{ GetAverageNeighborVel() };
+		const Vector2 desiredVelocity{ m_pBlendedSteering->CalculateSteering(deltaT, agentToDebug).LinearVelocity };
+		const Vector2 separationVelocity{ m_pSeparationBehavior->CalculateSteering(deltaT, agentToDebug).LinearVelocity };
+
+		DEBUGRENDERER2D->DrawCircle(agentToDebug->GetPosition(), m_NeighborhoodRadius, { 1.f, 1.f, 1.f }, 0.f);
+		DEBUGRENDERER2D->DrawDirection(agentToDebug->GetPosition(), desiredVelocity, desiredVelocity.Magnitude(), { 1,1,0 }, 0.f);
+		DEBUGRENDERER2D->DrawDirection(agentToDebug->GetPosition(), separationVelocity, rayLength, { 1,0,0 }, 0.f);
+
+		if(m_NrOfNeighbors > 0)
+		{
+			DEBUGRENDERER2D->DrawDirection(agentToDebug->GetPosition(), avgNeighborVel, rayLength, { 0,1,1 }, 0.f);
+			DEBUGRENDERER2D->DrawDirection(agentToDebug->GetPosition(), dirToAvgNeighborPos, dirToAvgNeighborPos.Magnitude(), { 0,1,0 }, 0.f);
+
+			for (const auto pOtherAgent : m_Agents)
+			{
+				if (pOtherAgent == agentToDebug) continue;
+
+				if (DistanceSquared(agentToDebug->GetPosition(), pOtherAgent->GetPosition()) <= m_NeighborhoodRadius * m_NeighborhoodRadius)
+					pOtherAgent->SetBodyColor({ 0,1,0 });
+				else
+					pOtherAgent->SetBodyColor({ 1,1,0 });
+			}
+		}
+	}
 }
 
 void Flock::UpdateAndRenderUI()
@@ -147,15 +180,16 @@ void Flock::UpdateAndRenderUI()
 	ImGui::Separator();
 	ImGui::Spacing();
 
+	ImGui::Text("Flocking");
+	ImGui::Spacing();
+	ImGui::Spacing();
+
+	ImGui::Checkbox("Debug Rendering", &m_CanDebugRender);
 	ImGui::Checkbox("Trim World", &m_TrimWorld);
 	if (m_TrimWorld)
 	{
-		ImGui::SliderFloat("Trim Size", &m_TrimWorldSize, 0.f, 200.f, "%.1");
+		ImGui::SliderFloat("Trim Size", &m_TrimWorldSize, 0.f, 500.f, "%1.");
 	}
-	ImGui::Spacing();
-
-	ImGui::Text("Flocking");
-	ImGui::Spacing();
 
 	ImGui::Text("Behavior Weights");
 	ImGui::Spacing();
@@ -198,10 +232,11 @@ Elite::Vector2 Flock::GetAverageNeighborPos() const
 		combinedPos += m_Neighbors[i]->GetPosition();
 	}
 
-	return combinedPos / static_cast<float>(m_NrOfNeighbors);
+	combinedPos /= static_cast<float>(m_NrOfNeighbors);
+	return combinedPos;
 }
 
-Elite::Vector2 Flock::GetAverageNeighborVelocity() const
+Elite::Vector2 Flock::GetAverageNeighborVel() const
 {
 	if (m_NrOfNeighbors == 0) return Vector2();
 
