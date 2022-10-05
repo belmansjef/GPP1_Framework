@@ -137,3 +137,45 @@ SteeringOutput Wander::CalculateSteering(float deltaT, SteeringAgent* pAgent)
 
 	return Seek::CalculateSteering(deltaT, pAgent);
 }
+
+SteeringOutput Pursuit::CalculateSteering(float deltaT, SteeringAgent* pAgent)
+{
+	SteeringOutput steering{};
+	const float pursuitFactor = Elite::Distance(m_Target.Position, pAgent->GetPosition()) / pAgent->GetMaxLinearSpeed();
+
+	Elite::Vector2 targetPos = m_Target.Position + m_Target.LinearVelocity * pursuitFactor;
+	Elite::Vector2 targetDir = targetPos - pAgent->GetPosition();
+	steering.LinearVelocity = targetDir.GetNormalized() * pAgent->GetMaxLinearSpeed();
+
+	if (pAgent->CanRenderBehavior())
+	{
+		DEBUGRENDERER2D->DrawDirection(pAgent->GetPosition(), pAgent->GetDirection(), 5.f, { 0.f, 1.f, 0.f });
+		DEBUGRENDERER2D->DrawDirection(pAgent->GetPosition(), targetDir, Distance(pAgent->GetPosition(), targetPos), { 1.f, 0.f, 0.f });
+	}
+
+	return steering;
+}
+
+SteeringOutput Evade::CalculateSteering(float deltaT, SteeringAgent* pAgent)
+{
+	SteeringOutput steering{};
+	const float distanceFromTarget = Elite::Distance(m_Target.Position, pAgent->GetPosition());
+	if (distanceFromTarget > m_EvadeRadius)
+	{
+		steering.IsValid = false;
+		return steering;
+	}
+
+	const float evadeFactor = distanceFromTarget / pAgent->GetMaxLinearSpeed();
+	Elite::Vector2 targetPos = m_Target.Position + m_Target.LinearVelocity * evadeFactor;
+	Elite::Vector2 targetDir = pAgent->GetPosition() - targetPos;
+	steering.LinearVelocity = targetDir.GetNormalized() * pAgent->GetMaxLinearSpeed();
+
+	if (pAgent->CanRenderBehavior())
+	{
+		DEBUGRENDERER2D->DrawDirection(pAgent->GetPosition(), pAgent->GetDirection(), 5.f, { 0.f, 1.f, 0.f });
+		DEBUGRENDERER2D->DrawDirection(pAgent->GetPosition(), targetDir, 5.f, { 1.f, 0.f, 0.f });
+	}
+
+	return steering;
+}

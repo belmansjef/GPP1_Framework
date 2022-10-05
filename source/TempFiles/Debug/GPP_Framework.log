@@ -1,3 +1,12 @@
-﻿  Flock.cpp
-  GPP_Framework.vcxproj -> C:\DAE\Second Year\Gameplay Programming 1\GPP1_Framework\bin\Debug\GPP_Framework.exe
+﻿  main.cpp
+  App_CombinedSteering.cpp
+  CombinedSteeringBehaviors.cpp
+  App_Flocking.cpp
+  Flock.cpp
+  FlockingSteeringBehaviors.cpp
+  App_SteeringBehaviors.cpp
+  SteeringAgent.cpp
+  SteeringBehaviors.cpp
+  Generating Code...
+  GPP_Framework.vcxproj -> E:\DAE\Second Year\Gameplay Programming 1\GPP1_Framework\bin\Debug\GPP_Framework.exe
   0 File(s) copied

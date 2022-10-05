@@ -54,13 +54,13 @@ private:
 	Cohesion* m_pCohesionBehavior = nullptr;
 	VelocityMatch* m_pVelMatchBehavior = nullptr;
 	Wander* m_pWanderBehavior = nullptr;
-	Flee* m_pFleeBehavior = nullptr;
-	// Evade* m_pEvadeBehavior = nullptr;
+	Evade* m_pEvadeBehavior = nullptr;
 
 	BlendedSteering* m_pBlendedSteering = nullptr;
 	PrioritySteering* m_pPrioritySteering = nullptr;
 
 	float* GetWeight(ISteeringBehavior* pBehaviour);
+	void UpdateEvadeTarget();
 
 	Flock(const Flock& other);
 	Flock& operator=(const Flock& other);

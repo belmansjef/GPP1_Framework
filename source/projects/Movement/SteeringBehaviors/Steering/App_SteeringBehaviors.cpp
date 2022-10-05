@@ -331,6 +331,12 @@ void App_SteeringBehaviors::SetAgentBehavior(ImGui_Agent& a)
 	case BehaviorTypes::Wander:
 		a.pBehavior = new Wander();
 		break;
+	case BehaviorTypes::Pursuit:
+		a.pBehavior = new Pursuit();
+		break;
+	case BehaviorTypes::Evade:
+		a.pBehavior = new Evade();
+		break;
 	}
 
 	UpdateTarget(a);
@@ -341,7 +347,6 @@ void App_SteeringBehaviors::SetAgentBehavior(ImGui_Agent& a)
 
 void App_SteeringBehaviors::UpdateTarget(ImGui_Agent& a)
 {
-
 	bool useMouseAsTarget = a.SelectedTarget < 0;
 	if (useMouseAsTarget)
 		a.pBehavior->SetTarget(m_Target);

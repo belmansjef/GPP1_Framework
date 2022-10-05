@@ -29,7 +29,7 @@ Flock::Flock(
 	m_pCohesionBehavior = new Cohesion(this);
 	m_pVelMatchBehavior = new VelocityMatch(this);
 	m_pWanderBehavior = new Wander();
-	m_pFleeBehavior = new Flee();
+	m_pEvadeBehavior = new Evade();
 
 	m_pBlendedSteering = new BlendedSteering({
 		{m_pCohesionBehavior, 0.35f},
@@ -39,7 +39,7 @@ Flock::Flock(
 		{m_pWanderBehavior, 0.5f}
 		});
 
-	m_pPrioritySteering = new PrioritySteering({ m_pFleeBehavior, m_pBlendedSteering });
+	m_pPrioritySteering = new PrioritySteering({ m_pEvadeBehavior, m_pBlendedSteering });
 	
 	for (int i{ 0 }; i < m_FlockSize; ++i)
 	{
@@ -86,11 +86,8 @@ void Flock::Update(float deltaT)
 		m_pAgentToEvade->TrimToWorld(m_TrimWorldSize);
 	}
 
-	TargetData evadeTarget;
-	evadeTarget.LinearVelocity = m_pAgentToEvade->GetLinearVelocity();
-	evadeTarget.Position = m_pAgentToEvade->GetPosition();
+	UpdateEvadeTarget();
 
-	m_pFleeBehavior->SetTarget(evadeTarget);
 	for(auto pAgent : m_Agents)
 	{
 		RegisterNeighbors(pAgent);
@@ -273,4 +270,14 @@ float* Flock::GetWeight(ISteeringBehavior* pBehavior)
 	}
 
 	return nullptr;
+}
+
+void Flock::UpdateEvadeTarget()
+{
+	auto target = TargetData{};
+	target.AngularVelocity = m_pAgentToEvade->GetAngularVelocity();
+	target.LinearVelocity = m_pAgentToEvade->GetLinearVelocity();
+	target.Position = m_pAgentToEvade->GetPosition();
+	target.Orientation = m_pAgentToEvade->GetRotation();
+	m_pEvadeBehavior->SetTarget(target);
 }

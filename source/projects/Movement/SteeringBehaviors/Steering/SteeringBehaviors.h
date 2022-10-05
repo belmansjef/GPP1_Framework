@@ -101,4 +101,25 @@ protected:
 	float m_MaxAngleChange = Elite::ToRadians(45.f);
 	float m_WanderAngle = 0.f;
 };
+
+class Pursuit : public ISteeringBehavior
+{
+public:
+	Pursuit() = default;
+	virtual ~Pursuit() = default;
+
+	SteeringOutput CalculateSteering(float deltaT, SteeringAgent* pAgent) override;
+};
+
+class Evade : public ISteeringBehavior
+{
+public:
+	Evade() = default;
+	virtual ~Evade() = default;
+
+	SteeringOutput CalculateSteering(float deltaT, SteeringAgent* pAgent) override;
+
+protected:
+	float m_EvadeRadius = 10.f;
+};
 #endif
