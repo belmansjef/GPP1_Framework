@@ -56,9 +56,9 @@ SteeringOutput Arrive::CalculateSteering(float deltaT, SteeringAgent* pAgent)
 	const float slowRadius = 15.f;
 
 	Elite::Vector2 toTarget = m_Target.Position - pAgent->GetPosition();
-	const float distance = toTarget.Magnitude();
+	const float distance = toTarget.MagnitudeSquared();
 
-	if (distance < arrivalRadius)
+	if (distance < arrivalRadius * arrivalRadius)
 	{
 		steering.LinearVelocity = Elite::Vector2{0.f, 0.f};
 		return steering;

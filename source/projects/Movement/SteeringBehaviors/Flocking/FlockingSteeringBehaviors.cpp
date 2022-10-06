@@ -33,12 +33,10 @@ SteeringOutput Separation::CalculateSteering(float deltaT, SteeringAgent* pAgent
 	for (int i {0}; i < nrOfNeighbors; ++i)
 	{
 		Elite::Vector2 pushForce = neighbors[i]->GetPosition() - pAgent->GetPosition();
-		pushForce /= m_pFlock->GetNeighborhoodRadius();
+		pushForce /= pushForce.MagnitudeSquared();
 		totalForce += pushForce;
 	}
 
-	// Average and reverse
-	totalForce /= static_cast<float>(nrOfNeighbors);
 	totalForce *= -1.f;
 	totalForce = totalForce.GetNormalized() * pAgent->GetMaxLinearSpeed();
 	steering.LinearVelocity = totalForce;

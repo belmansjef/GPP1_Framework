@@ -14,15 +14,17 @@ Flock::Flock(
 	SteeringAgent* pAgentToEvade /*= nullptr*/,
 	bool trimWorld /*= false*/)
 
-	: m_TrimWorldSize{ worldSize }
+	: m_TrimWorld{ trimWorld }
+	, m_TrimWorldSize{ worldSize }
 	, m_FlockSize{ flockSize }
-	, m_TrimWorld{ trimWorld }
-	, m_pAgentToEvade{ pAgentToEvade }
 	, m_NeighborhoodRadius{ 15 }
 	, m_NrOfNeighbors{ 0 }
+	, m_pAgentToEvade{ pAgentToEvade }
+	, m_CellSpace{ }
 {
-	m_Agents.resize(m_FlockSize);
-	m_Neighbors.resize(m_FlockSize);
+	m_CellSpace = CellSpace(m_TrimWorldSize, m_TrimWorldSize, 25.f, 25.f, m_FlockSize);
+
+#pragma region Behaviors
 
 	m_pSeekBehavior = new Seek();
 	m_pSeparationBehavior = new Separation(this);
@@ -40,7 +42,14 @@ Flock::Flock(
 		});
 
 	m_pPrioritySteering = new PrioritySteering({ m_pEvadeBehavior, m_pBlendedSteering });
-	
+
+#pragma endregion
+
+#pragma region Agents
+
+	m_Agents.resize(m_FlockSize);
+	m_Neighbors.resize(m_FlockSize);
+
 	for (int i{ 0 }; i < m_FlockSize; ++i)
 	{
 		m_Agents[i] = new SteeringAgent();
@@ -57,12 +66,20 @@ Flock::Flock(
 	m_pAgentToEvade->SetMass(0.f);
 	m_pAgentToEvade->SetAutoOrient(true);
 	m_pAgentToEvade->SetBodyColor({ 1, 0, 0 });
+
+#pragma endregion
+	
 }
 
 Flock::~Flock()
 {
+	SAFE_DELETE(m_pCohesionBehavior);
+	SAFE_DELETE(m_pSeparationBehavior);
+	SAFE_DELETE(m_pVelMatchBehavior);
+	SAFE_DELETE(m_pSeekBehavior);
+	SAFE_DELETE(m_pEvadeBehavior);
 	SAFE_DELETE(m_pBlendedSteering);
-	SAFE_DELETE(m_pPrioritySteering); // TODO: Does this delete all child behaviors?
+	SAFE_DELETE(m_pPrioritySteering);
 	SAFE_DELETE(m_pAgentToEvade);
 
 	for(auto pAgent: m_Agents)
@@ -70,11 +87,6 @@ Flock::~Flock()
 		SAFE_DELETE(pAgent);
 	}
 	m_Agents.clear();
-
-	for(auto pNeighborAgent: m_Neighbors)
-	{
-		SAFE_DELETE(pNeighborAgent);
-	}
 	m_Neighbors.clear();
 }
 

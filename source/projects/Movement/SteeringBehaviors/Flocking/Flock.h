@@ -1,11 +1,13 @@
 #pragma once
 #include "../SteeringHelpers.h"
 #include "FlockingSteeringBehaviors.h"
+#include "../SpacePartitioning/SpacePartitioning.h"
 
 class ISteeringBehavior;
 class SteeringAgent;
 class BlendedSteering;
 class PrioritySteering;
+class CellSpace;
 
 class Flock final
 {
@@ -48,6 +50,8 @@ private:
 
 	SteeringAgent* m_pAgentToEvade = nullptr;
 	
+	CellSpace m_CellSpace;
+
 	//Steering Behaviors
 	Seek* m_pSeekBehavior = nullptr;
 	Separation* m_pSeparationBehavior = nullptr;
