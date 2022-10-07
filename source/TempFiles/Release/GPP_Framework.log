@@ -1,1 +1,9 @@
-﻿LINK : fatal error LNK1181: cannot open input file 'GPP_PluginBase.lib'
+﻿  SpacePartitioning.cpp
+C:\DAE\Second Year\Gameplay Programming 1\GPP1_Framework\source\projects\Movement\SteeringBehaviors\SpacePartitioning\SpacePartitioning.cpp(150,18): warning C4018: '<': signed/unsigned mismatch
+  Generating code
+  3 of 1893 functions ( 0.2%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    3 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  GPP_Framework.vcxproj -> C:\DAE\Second Year\Gameplay Programming 1\GPP1_Framework\bin\Release\GPP_Framework.exe
+  0 File(s) copied

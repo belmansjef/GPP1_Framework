@@ -1,3 +1,9 @@
-﻿  FlockingSteeringBehaviors.cpp
+﻿  Flock.cpp
+C:\DAE\Second Year\Gameplay Programming 1\GPP1_Framework\source\projects\Movement\SteeringBehaviors\Flocking\Flock.cpp(106,18): warning C4018: '<': signed/unsigned mismatch
+  SpacePartitioning.cpp
+C:\DAE\Second Year\Gameplay Programming 1\GPP1_Framework\source\projects\Movement\SteeringBehaviors\SpacePartitioning\SpacePartitioning.cpp(127,53): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\DAE\Second Year\Gameplay Programming 1\GPP1_Framework\source\projects\Movement\SteeringBehaviors\SpacePartitioning\SpacePartitioning.cpp(126,53): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\DAE\Second Year\Gameplay Programming 1\GPP1_Framework\source\projects\Movement\SteeringBehaviors\SpacePartitioning\SpacePartitioning.cpp(136,18): warning C4018: '<': signed/unsigned mismatch
+  Generating Code...
   GPP_Framework.vcxproj -> C:\DAE\Second Year\Gameplay Programming 1\GPP1_Framework\bin\Debug\GPP_Framework.exe
   0 File(s) copied

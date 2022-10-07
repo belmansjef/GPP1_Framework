@@ -17,12 +17,13 @@ Flock::Flock(
 	: m_TrimWorld{ trimWorld }
 	, m_TrimWorldSize{ worldSize }
 	, m_FlockSize{ flockSize }
-	, m_NeighborhoodRadius{ 15 }
+	, m_NeighborhoodRadius{ 5 }
 	, m_NrOfNeighbors{ 0 }
 	, m_pAgentToEvade{ pAgentToEvade }
 	, m_CellSpace{ }
+	, m_OldPositionAgent(m_FlockSize)
 {
-	m_CellSpace = CellSpace(m_TrimWorldSize, m_TrimWorldSize, 25.f, 25.f, m_FlockSize);
+	m_CellSpace = CellSpace(m_TrimWorldSize, m_TrimWorldSize, 35, 35, m_FlockSize);
 
 #pragma region Behaviors
 
@@ -58,6 +59,8 @@ Flock::Flock(
 		m_Agents[i]->SetMass(0.f);
 		m_Agents[i]->SetAutoOrient(true);
 		m_Agents[i]->SetBodyColor({ 1, 1, 0 });
+		m_OldPositionAgent[i] = m_Agents[i]->GetPosition();
+		m_CellSpace.AddAgent(m_Agents[i]);
 	}
 
 	m_pAgentToEvade = new SteeringAgent();
@@ -100,14 +103,18 @@ void Flock::Update(float deltaT)
 
 	UpdateEvadeTarget();
 
-	for(auto pAgent : m_Agents)
+	for(int i{0}; i < m_Agents.size(); ++i)
 	{
-		RegisterNeighbors(pAgent);
-		pAgent->Update(deltaT);
+		
+		RegisterNeighbors(m_Agents[i]);
+		m_Agents[i]->Update(deltaT);
+
+		m_CellSpace.UpdateAgentCell(m_Agents[i], m_OldPositionAgent[i]);
+		m_OldPositionAgent[i] = m_Agents[i]->GetPosition();
 
 		if (m_TrimWorld)
 		{
-			pAgent->TrimToWorld(m_TrimWorldSize);
+			m_Agents[i]->TrimToWorld(m_TrimWorldSize);
 		}
 	}
 }
@@ -116,10 +123,19 @@ void Flock::Render(float deltaT)
 {
 	for (const auto pAgent : m_Agents)
 	{
+		if (m_FlockSize > 100) break;
 		pAgent->Render(deltaT);
 		pAgent->SetBodyColor({ 1,1,0 });
 	}
-	m_pAgentToEvade->Render(deltaT);
+	if(m_FlockSize <= 100)
+	{
+		m_pAgentToEvade->Render(deltaT);
+	}
+
+	if(m_CanDebugRenderSP)
+	{
+		m_CellSpace.RenderCells(m_Agents[0], m_NeighborhoodRadius);
+	}
 
 	if (m_CanDebugRender)
 	{
@@ -131,21 +147,33 @@ void Flock::Render(float deltaT)
 		const Vector2 avgNeighborVel{ GetAverageNeighborVel() };
 		const Vector2 desiredVelocity{ m_pBlendedSteering->CalculateSteering(deltaT, agentToDebug).LinearVelocity };
 		const Vector2 separationVelocity{ m_pSeparationBehavior->CalculateSteering(deltaT, agentToDebug).LinearVelocity };
+		const Vector2 agentPos{ agentToDebug->GetPosition() };
 
-		DEBUGRENDERER2D->DrawCircle(agentToDebug->GetPosition(), m_NeighborhoodRadius, { 1.f, 1.f, 1.f }, 0.f);
-		DEBUGRENDERER2D->DrawDirection(agentToDebug->GetPosition(), desiredVelocity, desiredVelocity.Magnitude(), { 1,1,0 }, 0.f);
-		DEBUGRENDERER2D->DrawDirection(agentToDebug->GetPosition(), separationVelocity, rayLength, { 1,0,0 }, 0.f);
+		const std::vector<Elite::Vector2> verts
+		{
+			{agentPos.x - m_NeighborhoodRadius, agentPos.y - m_NeighborhoodRadius},
+			{agentPos.x - m_NeighborhoodRadius, agentPos.y + m_NeighborhoodRadius},
+			{agentPos.x + m_NeighborhoodRadius, agentPos.y + m_NeighborhoodRadius},
+			{agentPos.x + m_NeighborhoodRadius, agentPos.y - m_NeighborhoodRadius}
+		};
+		Elite::Polygon* poly = new Elite::Polygon(verts);
+		DEBUGRENDERER2D->DrawPolygon(poly, { 1.f, 0.f, 0.f }, 0.f);
+		delete poly;
+
+		DEBUGRENDERER2D->DrawCircle(agentPos, m_NeighborhoodRadius, { 1.f, 1.f, 1.f }, 0.f);
+		DEBUGRENDERER2D->DrawDirection(agentPos, desiredVelocity, desiredVelocity.Magnitude(), { 1,1,0 }, 0.f);
+		DEBUGRENDERER2D->DrawDirection(agentPos, separationVelocity, rayLength, { 1,0,0 }, 0.f);
 
 		if(m_NrOfNeighbors > 0)
 		{
-			DEBUGRENDERER2D->DrawDirection(agentToDebug->GetPosition(), avgNeighborVel, rayLength, { 0,1,1 }, 0.f);
-			DEBUGRENDERER2D->DrawDirection(agentToDebug->GetPosition(), dirToAvgNeighborPos, dirToAvgNeighborPos.Magnitude(), { 0,1,0 }, 0.f);
+			DEBUGRENDERER2D->DrawDirection(agentPos, avgNeighborVel, rayLength, { 0,1,1 }, 0.f);
+			DEBUGRENDERER2D->DrawDirection(agentPos, dirToAvgNeighborPos, dirToAvgNeighborPos.Magnitude(), { 0,1,0 }, 0.f);
 
 			for (const auto pOtherAgent : m_Agents)
 			{
 				if (pOtherAgent == agentToDebug) continue;
 
-				if (DistanceSquared(agentToDebug->GetPosition(), pOtherAgent->GetPosition()) <= m_NeighborhoodRadius * m_NeighborhoodRadius)
+				if (DistanceSquared(agentPos, pOtherAgent->GetPosition()) <= m_NeighborhoodRadius * m_NeighborhoodRadius)
 					pOtherAgent->SetBodyColor({ 0,1,0 });
 				else
 					pOtherAgent->SetBodyColor({ 1,1,0 });
@@ -193,13 +221,6 @@ void Flock::UpdateAndRenderUI()
 	ImGui::Spacing();
 	ImGui::Spacing();
 
-	ImGui::Checkbox("Debug Rendering", &m_CanDebugRender);
-	ImGui::Checkbox("Trim World", &m_TrimWorld);
-	if (m_TrimWorld)
-	{
-		ImGui::SliderFloat("Trim Size", &m_TrimWorldSize, 0.f, 500.f, "%1.");
-	}
-
 	ImGui::Text("Behavior Weights");
 	ImGui::Spacing();
 
@@ -209,6 +230,29 @@ void Flock::UpdateAndRenderUI()
 	ImGui::SliderFloat("Seek", &m_pBlendedSteering->GetWeightedBehaviorsRef()[3].weight, 0.f, 1.f, "%.2");
 	ImGui::SliderFloat("Wander", &m_pBlendedSteering->GetWeightedBehaviorsRef()[4].weight, 0.f, 1.f, "%.2");
 
+	ImGui::Spacing();
+	ImGui::Spacing();
+	ImGui::Checkbox("Use Space Partitioning", &m_IsUsingSpacePartitioning);
+	if (m_IsUsingSpacePartitioning)
+	{
+		ImGui::Checkbox("Debug Space Partitioning", &m_CanDebugRenderSP);
+	}
+
+	ImGui::Spacing();
+	ImGui::Separator();
+	ImGui::Spacing();
+
+	ImGui::Text("Debugging");
+	ImGui::Spacing();
+	ImGui::Spacing();
+
+	ImGui::Checkbox("Debug Rendering", &m_CanDebugRender);
+	ImGui::Checkbox("Trim World", &m_TrimWorld);
+	if (m_TrimWorld)
+	{
+		ImGui::SliderFloat("Trim Size", &m_TrimWorldSize, 0.f, 500.f, "%1.");
+	}
+
 	//End
 	ImGui::PopAllowKeyboardFocus();
 	ImGui::End();
@@ -216,8 +260,14 @@ void Flock::UpdateAndRenderUI()
 
 void Flock::RegisterNeighbors(SteeringAgent* pAgent)
 {
+	if(m_IsUsingSpacePartitioning)
+	{
+		m_NrOfNeighbors = m_CellSpace.RegisterNeighbors(pAgent, m_NeighborhoodRadius, m_Neighbors);
+		return;
+	}
+
 	m_NrOfNeighbors = 0;
-	const Elite::Vector2 agentPos = pAgent->GetPosition();
+	const Vector2 agentPos = pAgent->GetPosition();
 
 	for (const auto pOtherAgent : m_Agents)
 	{
@@ -234,8 +284,8 @@ void Flock::RegisterNeighbors(SteeringAgent* pAgent)
 Elite::Vector2 Flock::GetAverageNeighborPos() const
 {
 	if (m_NrOfNeighbors == 0) return Vector2();
-
 	Vector2 combinedPos{};
+	
 	for (int i{0}; i < m_NrOfNeighbors; ++i)
 	{
 		combinedPos += m_Neighbors[i]->GetPosition();

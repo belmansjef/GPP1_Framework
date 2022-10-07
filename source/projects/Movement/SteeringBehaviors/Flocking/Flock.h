@@ -43,10 +43,14 @@ private:
 	int m_FlockSize = 0;
 	std::vector<SteeringAgent*> m_Agents;
 	std::vector<SteeringAgent*> m_Neighbors;
+	std::vector<Elite::Vector2> m_OldPositionAgent;
 
 	bool m_CanDebugRender = false;
 	float m_NeighborhoodRadius = 5.f;
 	int m_NrOfNeighbors = 0;
+
+	bool m_IsUsingSpacePartitioning = true;
+	bool m_CanDebugRenderSP = false;
 
 	SteeringAgent* m_pAgentToEvade = nullptr;
 	

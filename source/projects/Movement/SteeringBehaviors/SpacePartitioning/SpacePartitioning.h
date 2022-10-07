@@ -42,6 +42,7 @@ public:
 	void AddAgent(SteeringAgent* agent);
 	void UpdateAgentCell(SteeringAgent* agent, Elite::Vector2 oldPos);
 
+	int RegisterNeighbors(SteeringAgent* pAgent, float queryRadius, std::vector<SteeringAgent*>& neighbors);
 	void RegisterNeighbors(SteeringAgent* agent, float queryRadius);
 	const std::vector<SteeringAgent*>& GetNeighbors() const { return m_Neighbors; }
 	int GetNrOfNeighbors() const { return m_NrOfNeighbors; }
@@ -49,7 +50,7 @@ public:
 	//empties the cells of entities
 	void EmptyCells();
 
-	void RenderCells()const;
+	void RenderCells(const SteeringAgent* pAgent, float queryRadius)const;
 
 private:
 	// Cells and properties
