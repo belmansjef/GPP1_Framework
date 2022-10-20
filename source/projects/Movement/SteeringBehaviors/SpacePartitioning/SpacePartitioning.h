@@ -71,4 +71,5 @@ private:
 
 	// Helper functions
 	int PositionToIndex(const Elite::Vector2 pos) const;
+	int ConvertPositionToIndex(const float pos, const float cellSize, const int nrOfCells) const;
 };

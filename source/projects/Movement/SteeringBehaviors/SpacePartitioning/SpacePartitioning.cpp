@@ -161,3 +161,8 @@ int CellSpace::PositionToIndex(const Elite::Vector2 pos) const
 	}
 	return 0;
 }
+
+int CellSpace::ConvertPositionToIndex(const float pos, const float CellSize, const int nrOfCells) const
+{
+	return 0;
+}
