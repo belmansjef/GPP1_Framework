@@ -41,28 +41,26 @@ void App_GraphTheory::Update(float deltaTime)
 	switch (eulerianity)
 	{
 	case Elite::Eulerianity::notEulerian:
-		cout << "Not eulerian \n";
+		
 		for (auto p : m_Graph2D->GetAllNodes())
 		{
 			p->SetColor({ 1.f, 1.f, 1.f });
 		}
 		break;
 	case Elite::Eulerianity::semiEulerian:
-		cout << "Semi eulerian\n";
+	
 		break;
 	case Elite::Eulerianity::eulerian:
-		cout << "Eulerian\n";
+		
 		break;
 	default:
 		break;
 	}
 
-	cout << path.size() << endl;
 	const float gradientStep{ 1.f / path.size() };
 	for (int i = 0; i < path.size(); i++)
 	{
 		path[i]->SetColor({1.f - gradientStep * i, 1.f - gradientStep * i, 1.f - gradientStep * i});
-		cout << path[i]->GetIndex() << " > ";
 	}
 	cout << "\n";
 

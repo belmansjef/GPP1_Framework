@@ -1,8 +1,14 @@
-﻿  App_GraphTheory.cpp
+﻿  main.cpp
+C:\DAE\Second Year\Gameplay Programming 1\GPP1_Framework\source\projects\App_Selector.h(39,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+  App_PathfindingAStar.cpp
+  App_GraphTheory.cpp
+C:\DAE\Second Year\Gameplay Programming 1\GPP1_Framework\source\projects\Movement\Pathfinding\GraphTheory\App_GraphTheory.cpp(61,20): warning C4018: '<': signed/unsigned mismatch
+  SpacePartitioning.cpp
+C:\DAE\Second Year\Gameplay Programming 1\GPP1_Framework\source\projects\Movement\SteeringBehaviors\SpacePartitioning\SpacePartitioning.cpp(150,18): warning C4018: '<': signed/unsigned mismatch
   Generating code
-  3 of 2373 functions ( 0.1%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
-    14 functions had inline decision re-evaluated but remain unchanged
+  1075 of 2964 functions (36.3%) were compiled, the rest were copied from previous compilation.
+    447 functions were new in current compilation
+    399 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   GPP_Framework.vcxproj -> C:\DAE\Second Year\Gameplay Programming 1\GPP1_Framework\bin\Release\GPP_Framework.exe
   0 File(s) copied
