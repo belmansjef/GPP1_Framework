@@ -68,7 +68,7 @@ namespace Elite
 			}
 
 			//Run A star on new graph
-			auto pathfinder = AStar<NavGraphNode, GraphConnection2D>(pNavGraphCopy.get(), Elite::HeuristicFunctions::Chebyshev);
+			auto pathfinder = AStar<NavGraphNode, GraphConnection2D>(pNavGraphCopy.get(), Elite::HeuristicFunctions::Euclidean);
 			std::vector<Elite::NavGraphNode*> m_vPath = pathfinder.FindPath(startNode, endNode);
 
 			for (const auto node : m_vPath)
@@ -77,11 +77,13 @@ namespace Elite
 			}
 			
 			//OPTIONAL BUT ADVICED: Debug Visualisation
+			debugNodePositions = finalPath;
 
 			//Run optimiser on new graph, MAKE SURE the A star path is working properly before starting this section and uncommenting this!!!
-			//m_Portals = SSFA::FindPortals(nodes, m_pNavGraph->GetNavMeshPolygon());
-			//finalPath = SSFA::OptimizePortals(m_Portals);
+			const auto portals = SSFA::FindPortals(m_vPath, pNavGraph->GetNavMeshPolygon());
+			finalPath = SSFA::OptimizePortals(portals);
 
+			debugPortals = portals;
 			return finalPath;
 		}
 	};
