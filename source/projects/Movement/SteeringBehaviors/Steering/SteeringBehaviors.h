@@ -98,7 +98,7 @@ public:
 protected:
 	float m_OffsetDistance = 6.f;
 	float m_Radius = 4.f;
-	float m_MaxAngleChange = Elite::ToRadians(45.f);
+	float m_MaxAngleChange = Elite::ToRadians(60.f);
 	float m_WanderAngle = 0.f;
 };
 
@@ -118,6 +118,7 @@ public:
 	virtual ~Evade() = default;
 
 	SteeringOutput CalculateSteering(float deltaT, SteeringAgent* pAgent) override;
+	void SetEvadeRadius(float evadeRadius) { m_EvadeRadius = evadeRadius; }
 
 protected:
 	float m_EvadeRadius = 10.f;
