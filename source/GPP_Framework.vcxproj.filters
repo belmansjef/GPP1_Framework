@@ -43,6 +43,8 @@
     <ClCompile Include="framework\EliteAI\EliteDecisionMaking\EliteFiniteStateMachine\EFiniteStateMachine.cpp" />
     <ClCompile Include="projects\DecisionMaking\FiniteStateMachines\App_AgarioGame.cpp" />
     <ClCompile Include="projects\DecisionMaking\FiniteStateMachines\StatesAndTransitions.cpp" />
+    <ClCompile Include="projects\DecisionMaking\BehaviorTrees\App_AgarioGame_BT.cpp" />
+    <ClCompile Include="framework\EliteAI\EliteDecisionMaking\EliteBehaviorTree\EBehaviorTree.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="projects\App_Selector.h" />
@@ -134,6 +136,9 @@
     <ClInclude Include="framework\EliteAI\EliteDecisionMaking\EliteFiniteStateMachine\EFiniteStateMachine.h" />
     <ClInclude Include="projects\DecisionMaking\FiniteStateMachines\App_AgarioGame.h" />
     <ClInclude Include="projects\DecisionMaking\FiniteStateMachines\StatesAndTransitions.h" />
+    <ClInclude Include="projects\DecisionMaking\BehaviorTrees\Behaviors.h" />
+    <ClInclude Include="projects\DecisionMaking\BehaviorTrees\App_AgarioGame_BT.h" />
+    <ClInclude Include="framework\EliteAI\EliteDecisionMaking\EliteBehaviorTree\EBehaviorTree.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="imgui.ini" />

@@ -17,6 +17,9 @@ AgarioAgent::AgarioAgent(Elite::Vector2 pos, Color color)
 	m_pWander = new Wander();
 	m_pSeek = new Seek();
 	m_pFlee = new Flee();
+	m_pPursuit = new Pursuit();
+
+	this->SetAutoOrient(true);
 }
 
 AgarioAgent::AgarioAgent(Elite::Vector2 pos)
@@ -85,8 +88,15 @@ void AgarioAgent::SetToSeek(Elite::Vector2 seekPos)
 void AgarioAgent::SetToFlee(Elite::Vector2 fleePos, float fleeRadius)
 {
 	m_pFlee->SetTarget(fleePos);
-	dynamic_cast<Flee*>(m_pFlee)->SetFleeRadius(fleeRadius);
+	m_pFlee->SetFleeRadius(fleeRadius);
 	SetSteeringBehavior(m_pFlee);
+}
+
+void AgarioAgent::SetToPursuit(const AgarioAgent* pursuitTarget)
+{
+	TargetData targetData{pursuitTarget->GetPosition(), pursuitTarget->GetRotation(), pursuitTarget->GetLinearVelocity(), pursuitTarget->GetAngularVelocity()};
+	m_pPursuit->SetTarget(targetData);
+	SetSteeringBehavior(m_pPursuit);
 }
 
 void AgarioAgent::OnUpgrade(float amountOfFood)

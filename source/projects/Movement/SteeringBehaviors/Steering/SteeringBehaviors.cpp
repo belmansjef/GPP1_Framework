@@ -19,8 +19,7 @@ SteeringOutput Seek::CalculateSteering(float deltaT, SteeringAgent* pAgent)
 
 	if(pAgent->CanRenderBehavior())
 	{
-		DEBUGRENDERER2D->DrawDirection(pAgent->GetPosition(), steering.LinearVelocity, 5.f, {0.f,1.f,0.f});
-		DEBUGRENDERER2D->DrawCircle(m_Target.Position, 3.f, Elite::Color{ 1.f, 0.f, 0.f }, DEBUGRENDERER2D->NextDepthSlice());
+		DEBUGRENDERER2D->DrawDirection(pAgent->GetPosition(), steering.LinearVelocity, 5.f + pAgent->GetRadius(), {0.f,1.f,0.f});
 	}
 
 	return steering;
@@ -44,8 +43,8 @@ SteeringOutput Flee::CalculateSteering(float deltaT, SteeringAgent* pAgent)
 
 	if (pAgent->CanRenderBehavior())
 	{
-		DEBUGRENDERER2D->DrawDirection(pAgent->GetPosition(), steering.LinearVelocity, 5.f, { 0.f,1.f,0.f });
-		DEBUGRENDERER2D->DrawCircle(m_Target.Position, 20.0f, { 1.f, 0.f, 0.f }, DEBUGRENDERER2D->NextDepthSlice());
+		DEBUGRENDERER2D->DrawDirection(pAgent->GetPosition(), steering.LinearVelocity, 5.f + pAgent->GetRadius(), {0.f,1.f,0.f});
+		DEBUGRENDERER2D->DrawCircle(m_Target.Position, m_FleeRadius, { 1.f, 0.f, 0.f }, DEBUGRENDERER2D->NextDepthSlice());
 	}
 
 	return steering;
@@ -151,7 +150,7 @@ SteeringOutput Pursuit::CalculateSteering(float deltaT, SteeringAgent* pAgent)
 
 	if (pAgent->CanRenderBehavior())
 	{
-		DEBUGRENDERER2D->DrawDirection(pAgent->GetPosition(), pAgent->GetDirection(), 5.f, { 0.f, 1.f, 0.f });
+		DEBUGRENDERER2D->DrawDirection(pAgent->GetPosition(), pAgent->GetDirection(), 5.f + pAgent->GetRadius(), {0.f, 1.f, 0.f});
 		DEBUGRENDERER2D->DrawDirection(pAgent->GetPosition(), targetDir, Distance(pAgent->GetPosition(), targetPos), { 1.f, 0.f, 0.f });
 	}
 

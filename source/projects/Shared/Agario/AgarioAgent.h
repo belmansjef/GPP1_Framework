@@ -11,7 +11,11 @@
 
 #include "projects/Movement/SteeringBehaviors/SteeringAgent.h"
 
+class Wander;
+class Seek;
 class Flee;
+class Pursuit;
+
 class AgarioAgent : public SteeringAgent
 {
 public:
@@ -33,6 +37,7 @@ public:
 	void SetToWander();
 	void SetToSeek(Elite::Vector2 seekPos);
 	void SetToFlee(Elite::Vector2 fleePos, float fleeRadius);
+	void SetToPursuit(const AgarioAgent* pursuitTarget);
 
 private:
 	Elite::IDecisionMaking* m_DecisionMaking = nullptr;
@@ -40,9 +45,10 @@ private:
 	bool m_ToDestroy = false;
 	float m_SpeedBase = 25.f;
 
-	ISteeringBehavior* m_pWander = nullptr;
-	ISteeringBehavior* m_pSeek = nullptr;
+	Wander* m_pWander = nullptr;
+	Seek* m_pSeek = nullptr;
 	Flee* m_pFlee = nullptr;
+	Pursuit* m_pPursuit = nullptr;
 	
 private:
 	void OnUpgrade(float amountOfFood);
