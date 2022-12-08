@@ -1,4 +1,11 @@
-﻿  App_AgarioGame_BT.cpp
-C:\DAE\Second Year\Gameplay Programming 1\GPP1_Framework\source\projects\DecisionMaking\BehaviorTrees\Behaviors.h(77): warning C4715: 'BT_Actions::ChangeToPursuitAgent': not all control paths return a value
+﻿C:\Program Files\Microsoft Visual Studio\2022\Enterprise\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(1101,5): warning MSB8027: Two or more files with the name of App_AgarioGame_BT.cpp will produce outputs to the same location. This can lead to an incorrect build result.  The files involved are projects\DecisionMaking\BehaviorTrees\App_AgarioGame_BT.cpp, projects\DecisionMaking\InfluenceMaps\App_AgarioGame_BT.cpp.
+  main.cpp
+C:\DAE\Second Year\Gameplay Programming 1\GPP1_Framework\source\projects\App_Selector.h(70,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+  App_InfluenceMap.cpp
+C:\DAE\Second Year\Gameplay Programming 1\GPP1_Framework\source\framework\EliteAI\EliteGraphs\EInfluenceMap.h(77,20): warning C4018: '<': signed/unsigned mismatch
+C:\DAE\Second Year\Gameplay Programming 1\GPP1_Framework\source\framework\EliteAI\EliteGraphs\EInfluenceMap.h(51,2): message : while compiling class template member function 'void Elite::InfluenceMap<App_InfluenceMap::InfluenceGrid>::PropagateInfluence(float)'
+C:\DAE\Second Year\Gameplay Programming 1\GPP1_Framework\source\projects\DecisionMaking\InfluenceMaps\App_InfluenceMap.cpp(61,38): message : see reference to function template instantiation 'void Elite::InfluenceMap<App_InfluenceMap::InfluenceGrid>::PropagateInfluence(float)' being compiled
+C:\DAE\Second Year\Gameplay Programming 1\GPP1_Framework\source\projects\DecisionMaking\InfluenceMaps\App_InfluenceMap.cpp(13,2): message : see reference to class template instantiation 'Elite::InfluenceMap<App_InfluenceMap::InfluenceGrid>' being compiled
+  Generating Code...
   GPP_Framework.vcxproj -> C:\DAE\Second Year\Gameplay Programming 1\GPP1_Framework\bin\Debug\GPP_Framework.exe
   0 File(s) copied
