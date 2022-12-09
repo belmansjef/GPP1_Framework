@@ -11,8 +11,8 @@
 // #define ActiveApp_NavMeshGraph
 // #define ActiveApp_FSM
 // #define ActiveApp_BT
-// #define ActiveApp_InfluenceMap
-#define ActiveApp_InfluenceMap_BT
+#define ActiveApp_InfluenceMap
+//#define ActiveApp_InfluenceMap_BT
 
 //---------- Registered Applications -----------
 #ifdef ActiveApp_Sandbox

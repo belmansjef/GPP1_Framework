@@ -73,10 +73,9 @@ namespace Elite
 			m_InfluenceDoubleBuffer.emplace_back(Lerp(highestInfluence, node->GetInfluence(), m_Momentum));
 		}
 
-		auto& nodes = GetAllNodes();
 		for(int i = 0; i < m_InfluenceDoubleBuffer.size(); i++)
 		{
-			nodes[i]->SetInfluence(m_InfluenceDoubleBuffer[i]);
+			GetNode(i)->SetInfluence(m_InfluenceDoubleBuffer[i]);
 		}
 	}
 
